@@ -137,34 +137,6 @@ exports.decrementProductQuantityService = async (productId, userId) => {
 };
 
 
-// exports.decrementProductQuantityService = async (productId, userId) => {
-//     const cart = await Cart.findOne({ user: userId });
-
-//     if (!cart) {
-//         throw new CustomError("Cart not found", 404);
-//     }
-
-//     const productIndex = cart.products.findIndex(item => item.product.toString() === productId);
-
-//     if (productIndex === -1) {
-//         throw new CustomError("Product not found in the cart", 404);
-//     }
-
-//     if (cart.products[productIndex].quantity > 1) {
-//         cart.products[productIndex].quantity -= 1;
-//     } else {
-//         cart.products.splice(productIndex, 1); // ✅ Remove product if quantity is 1
-//     }
-
-//     await cart.save();
-
-//     // ✅ Return full updated cart instead of MongoDB metadata
-//     return { 
-//         message: "Product quantity decremented successfully", 
-//         cart 
-//     };
-// };
-
 
 exports.clearCartServices = async (userId) => {
     let cart = await Cart.findOne({ user: userId });
@@ -174,7 +146,7 @@ exports.clearCartServices = async (userId) => {
         return { message: "Cart is already empty" };
     }
 
-    cart.products = []; // Clear the cart
+    cart.products = [];
     await cart.save();
     
     return { message: "Cart cleared successfully" };

@@ -1,6 +1,6 @@
 const Product=require('../models/productModel')
 const CustomError=require('../utilis/customError')
-const cloudinary=require('../config/cloudinary')
+
 exports.productService=async({categories,search,page=1,limit=10,isAdmin})=>{
     const query= isAdmin ? {}:{isDelete:false}
     if(search){
@@ -59,11 +59,18 @@ exports.deleteProductService=async(productId)=>{
     return updated
 }
 
-exports.updateProductService=async(_id,updateItems)=>{
-    const existingProduct=await Product.findById(_id)
-    if(!existingProduct){
-        throw new CustomError("Product is unavailable",400)
-    }
-    const data=await Product.findByIdAndUpdate(_id,{$set:{isDelete:false,...updateItems}},{new:true})
+exports.updateProductService=async(id,updateItems)=>{
+   
+   try {
+    const data=await Product.findOneAndUpdate({_id:id},
+        {$set:{isDelete:false,...updateItems}},
+        {new:true});
+
+        if(!data){
+            throw new CustomError('Product not found',404)
+        }
     return data
+   } catch (error) {
+     console.log('error in updating',error)
+   }
 }
